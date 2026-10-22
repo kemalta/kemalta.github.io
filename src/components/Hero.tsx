@@ -43,7 +43,7 @@ export function Hero({ revealed }: { revealed: boolean }) {
             </div>
 
             <h1
-              className="mt-7 font-[family-name:var(--font-display)] text-[clamp(3.4rem,11vw,9.5rem)] leading-[0.86] tracking-[-0.03em] text-ink"
+              className="glitch mt-7 font-[family-name:var(--font-display)] text-[clamp(3.4rem,11vw,9.5rem)] leading-[0.86] tracking-[-0.03em] text-ink"
               data-revealed={revealed}
             >
               <SplitText text={profile.name} step={22} delay={260} className="block" />

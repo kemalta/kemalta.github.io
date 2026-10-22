@@ -6,6 +6,7 @@ import { accentColor } from './colorCache'
 import { Core } from './Core'
 import { Halo } from './Halo'
 import { Rings } from './Rings'
+import { Orbiters } from './Orbiters'
 import { Motes } from './Motes'
 import { GridFloor } from './GridFloor'
 import { CameraRig } from './CameraRig'
@@ -50,6 +51,7 @@ export function Scene({ detail, motes, intensity, rings, onFirstFrame }: ScenePr
       <Halo intensity={intensity} />
       <Core detail={detail} intensity={intensity} />
       <Rings visible={rings} />
+      <Orbiters visible={rings} />
       <Motes count={motes} />
       <GridFloor />
     </>

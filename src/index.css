@@ -252,17 +252,210 @@
   /* Reveal base — JS toggles [data-revealed] */
   [data-reveal] {
     opacity: 0;
-    transform: translate3d(0, 26px, 0);
+    transform: translate3d(0, 26px, 0) scale(0.988);
+    filter: blur(7px);
     transition:
       opacity 0.9s var(--ease-out-expo),
-      transform 0.9s var(--ease-out-expo);
+      transform 1s var(--ease-out-expo),
+      filter 0.9s var(--ease-out-expo);
     transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
+    will-change: opacity, transform, filter;
   }
 
   [data-reveal][data-revealed='true'] {
     opacity: 1;
     transform: none;
+    filter: none;
+  }
+
+  /* Phones skip the blur pass — it is the one effect that can cost frames
+     on a low-end GPU, and at that width it is barely visible anyway. */
+  @media (width < 40rem) {
+    [data-reveal] {
+      filter: none;
+    }
+  }
+
+  /* Section rule draws itself across when the header arrives */
+  [data-reveal] .rule {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.15s var(--ease-out-expo) calc(var(--reveal-delay, 0ms) + 120ms);
+  }
+
+  [data-reveal][data-revealed='true'] .rule {
+    transform: scaleX(1);
+  }
+
+  /* Corner brackets — a sensor frame that snaps around a section header */
+  .brackets {
+    position: absolute;
+    inset: -0.85rem;
+    pointer-events: none;
+  }
+
+  .brackets i {
+    position: absolute;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-color: color-mix(in oklab, var(--color-signal) 42%, transparent);
+    border-style: solid;
+    border-width: 0;
+    opacity: 0;
+    transition:
+      opacity 0.7s var(--ease-out-expo),
+      transform 0.9s var(--ease-out-expo);
+    transition-delay: calc(var(--reveal-delay, 0ms) + 180ms);
+  }
+
+  .brackets i:nth-child(1) {
+    top: 0;
+    left: 0;
+    border-top-width: 1px;
+    border-left-width: 1px;
+    transform: translate3d(-6px, -6px, 0);
+  }
+  .brackets i:nth-child(2) {
+    top: 0;
+    right: 0;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    transform: translate3d(6px, -6px, 0);
+  }
+  .brackets i:nth-child(3) {
+    bottom: 0;
+    left: 0;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    transform: translate3d(-6px, 6px, 0);
+  }
+  .brackets i:nth-child(4) {
+    bottom: 0;
+    right: 0;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+    transform: translate3d(6px, 6px, 0);
+  }
+
+  [data-revealed='true'] .brackets i {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Spotlight that follows the pointer across a card surface */
+  .surface::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 0%),
+      color-mix(in oklab, var(--accent, var(--color-signal)) 13%, transparent),
+      transparent 62%
+    );
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out-expo);
+  }
+
+  .surface:hover::after {
+    opacity: 1;
+  }
+
+  /* Power-on glitch flash for the hero name */
+  [data-revealed='true'].glitch {
+    animation: glitch-in 780ms steps(1, end) 760ms 1 both;
+  }
+
+  @keyframes glitch-in {
+    0% {
+      text-shadow: 3px 0 var(--color-phosphor), -3px 0 var(--color-alert);
+      transform: translate3d(-3px, 0, 0) skewX(-2deg);
+    }
+    18% {
+      text-shadow: -3px 0 var(--color-phosphor), 3px 0 var(--color-alert);
+      transform: translate3d(2px, 0, 0) skewX(1deg);
+    }
+    36% {
+      text-shadow: 2px 0 var(--color-signal), -2px 0 var(--color-violet);
+      transform: translate3d(-2px, 0, 0);
+    }
+    54% {
+      text-shadow: none;
+      transform: none;
+    }
+    72% {
+      text-shadow: -2px 0 var(--color-phosphor), 2px 0 var(--color-alert);
+      transform: translate3d(1px, 0, 0);
+    }
+    100% {
+      text-shadow: none;
+      transform: none;
+    }
+  }
+
+  /* Cursor reticle — vertical ticks on the ring */
+  .cursor-ring::before,
+  .cursor-ring::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 5px;
+    background: var(--color-signal);
+    transform: translateX(-50%);
+  }
+
+  .cursor-ring::before {
+    top: -7px;
+  }
+
+  .cursor-ring::after {
+    bottom: -7px;
+  }
+
+  /* CRT layer — fine scanlines plus a slow phosphor sweep */
+  .crt::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 54;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgb(232 238 245 / 0.035) 0 1px,
+      transparent 1px 4px
+    );
+    opacity: 0.55;
+  }
+
+  .crt::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 26vh;
+    z-index: 55;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in oklab, var(--color-phosphor) 6%, transparent),
+      transparent
+    );
+    animation: crt-sweep 9s linear infinite;
+  }
+
+  @keyframes crt-sweep {
+    0% {
+      transform: translate3d(0, -28vh, 0);
+    }
+    100% {
+      transform: translate3d(0, 118vh, 0);
+    }
   }
 
   /* Split-text headline */
@@ -327,6 +520,21 @@
   [data-reveal] {
     opacity: 1;
     transform: none;
+    filter: none;
+  }
+
+  [data-reveal] .rule {
+    transform: none;
+  }
+
+  .brackets i {
+    opacity: 1;
+    transform: none;
+  }
+
+  .crt::after {
+    animation: none;
+    opacity: 0;
   }
 
   .split-char > span {

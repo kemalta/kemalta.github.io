@@ -1,26 +1,41 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import type { Accent } from '../content'
 import { getState } from '../lib/store'
+import { accentColor } from './colorCache'
+import { ringFragment, ringVertex } from './shaders'
 
 interface RingsProps {
   visible: boolean
 }
 
+const RADII = [2.05, 2.55, 3.15]
+const ACCENTS: Accent[] = ['signal', 'phosphor', 'violet']
+const OPACITY = [0.8, 0.65, 0.5]
+const SPEED = [0.14, -0.1, 0.07]
+
+function buildUniforms() {
+  return RADII.map((_, index) => ({
+    uBase: { value: accentColor(ACCENTS[index]).clone().multiplyScalar(0.4) },
+    uAccent: { value: accentColor(ACCENTS[index]).clone() },
+    uPhase: { value: index * 0.33 },
+    uOpacity: { value: OPACITY[index] },
+  }))
+}
+
 /**
- * Three thin orbital rings — the instrument bezel around the core.
- * Built-in materials are used here so three handles tone mapping and colour
- * space exactly as it does everywhere else.
+ * Three orbital rings — the instrument bezel around the core. Each ring is a
+ * shader surface: a dim base line, tick marks around the circumference and a
+ * comet head chasing along it. The heads alternate direction and pace so the
+ * assembly never resolves into a single rotating object.
  */
 export function Rings({ visible }: RingsProps) {
   const groupRef = useRef<THREE.Group>(null)
   const ringRefs = useRef<(THREE.Mesh | null)[]>([])
+  const materialRefs = useRef<(THREE.ShaderMaterial | null)[]>([])
 
-  const materials = [
-    new THREE.MeshBasicMaterial({ color: '#f5a524', transparent: true, opacity: 0.55 }),
-    new THREE.MeshBasicMaterial({ color: '#35d6c3', transparent: true, opacity: 0.38 }),
-    new THREE.MeshBasicMaterial({ color: '#8b7cf6', transparent: true, opacity: 0.26 }),
-  ]
+  const uniforms = useMemo(() => buildUniforms(), [])
 
   useFrame((state) => {
     const group = groupRef.current
@@ -34,21 +49,38 @@ export function Rings({ visible }: RingsProps) {
     ringRefs.current[0]?.rotation.set(Math.PI / 2.4, 0, 0)
     ringRefs.current[1]?.rotation.set(0, Math.PI / 2.2, t * 0.25)
     ringRefs.current[2]?.rotation.set(Math.PI / 3.6, t * 0.16, Math.PI / 5)
+
+    for (let i = 0; i < SPEED.length; i += 1) {
+      const material = materialRefs.current[i]
+      if (!material) continue
+      const phase = (t * SPEED[i] + i * 0.33 + progress * 0.8) % 1
+      material.uniforms.uPhase.value = phase < 0 ? phase + 1 : phase
+    }
   })
 
   if (!visible) return null
 
   return (
     <group ref={groupRef}>
-      {[2.05, 2.55, 3.15].map((radius, index) => (
+      {RADII.map((radius, index) => (
         <mesh
           key={radius}
           ref={(node) => {
             ringRefs.current[index] = node
           }}
         >
-          <torusGeometry args={[radius, 0.0075, 3, 220]} />
-          <primitive object={materials[index]} attach="material" />
+          <torusGeometry args={[radius, 0.011, 3, 240]} />
+          <shaderMaterial
+            ref={(node) => {
+              materialRefs.current[index] = node
+            }}
+            vertexShader={ringVertex}
+            fragmentShader={ringFragment}
+            uniforms={uniforms[index]}
+            transparent
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
         </mesh>
       ))}
     </group>

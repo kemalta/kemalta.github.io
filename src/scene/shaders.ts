@@ -210,10 +210,19 @@ void main(){
   float wave = sin(radius * 0.55 - uTime * 1.1 - uScroll * 6.0) * 0.5 + 0.5;
   float pulse = pow(wave, 8.0) * smoothstep(26.0, 2.0, radius);
 
-  float alpha = (fine * 0.20 + coarse * 0.45) * fade + pulse * 0.30;
+  // Radar sweep: a rotating wedge that trails behind the beam, fading with
+  // distance. It is the cheapest possible way to make the floor read as a
+  // live operations display rather than a decorative grid.
+  float ang = atan(p.y, p.x);
+  float sweep = mod(uTime * 0.5, 6.2831853);
+  float d = mod(ang - sweep + 3.14159265, 6.2831853) - 3.14159265;
+  float trail = pow(max(0.0, 1.0 - abs(d + 0.62) / 1.2), 2.2);
+  trail *= smoothstep(30.0, 2.5, radius) * horizon;
+
+  float alpha = (fine * 0.20 + coarse * 0.45) * fade + pulse * 0.30 + trail * 0.20;
   alpha *= horizon;
 
-  vec3 color = mix(uColor, uAccent, pulse * 0.8 + coarse * 0.25);
+  vec3 color = mix(uColor, uAccent, pulse * 0.8 + coarse * 0.25 + trail * 0.7);
 
   gl_FragColor = vec4(color, clamp(alpha, 0.0, 1.0));
 
@@ -306,6 +315,66 @@ void main(){
   vec3 color = mix(uAccent, vec3(1.0), core * 0.35);
 
   gl_FragColor = vec4(color * a * breathe * uIntensity, a * breathe);
+
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}
+`
+
+/* ------------------------------------------------------------------ *
+ * Rings - instrument bezel with tick marks and a sweeping emitter
+ * ------------------------------------------------------------------ */
+
+export const ringVertex = /* glsl */ `
+varying vec2 vUv;
+void main(){
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`
+
+export const ringFragment = /* glsl */ `
+uniform vec3 uBase;
+uniform vec3 uAccent;
+uniform float uPhase;
+uniform float uOpacity;
+
+varying vec2 vUv;
+
+void main(){
+  float u = vUv.x;
+
+  // Tick marks around the circumference. fwidth fades them out once the
+  // spacing drops below a pixel so the ring never shimmers.
+  float coord = u * 128.0;
+  float fw = fwidth(coord);
+  float dash = smoothstep(0.55, 0.93, fract(coord)) * (1.0 - smoothstep(0.10, 0.40, fw));
+
+  // A comet head chasing around the ring, with a soft tail behind it.
+  float d = fract(u - uPhase);
+  float head = pow(1.0 - d, 28.0);
+  float glow = pow(1.0 - d, 4.5) * 0.32;
+
+  float a = (0.32 + dash * 0.60 + head * 2.0 + glow) * uOpacity;
+  vec3 col = mix(uBase, uAccent, clamp(head * 1.5 + dash * 0.40 + glow, 0.0, 1.0));
+
+  gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}
+`
+
+/* Trail arc behind an orbiting packet. `vUv.x` is 0 at the head. */
+export const trailFragment = /* glsl */ `
+uniform vec3 uColor;
+uniform float uOpacity;
+
+varying vec2 vUv;
+
+void main(){
+  float f = pow(1.0 - vUv.x, 2.4);
+  gl_FragColor = vec4(uColor * f * 2.0, f * uOpacity);
 
   #include <tonemapping_fragment>
   #include <colorspace_fragment>

@@ -48,6 +48,11 @@ export function Core({ detail, intensity }: CoreProps) {
     material.uniforms.uTime.value = state.clock.elapsedTime
     material.uniforms.uScroll.value = progress
     material.uniforms.uPulse.value = Math.abs(velocity)
+    /* Fast scrolling energises the surface: the displacement spikes, then
+       settles back to its resting amplitude. */
+    const ampTarget = 1 + Math.min(1, Math.abs(velocity)) * 0.55
+    material.uniforms.uAmp.value +=
+      (ampTarget - material.uniforms.uAmp.value) * Math.min(1, delta * 5)
 
     phaseTarget.value = progress * 6
     material.uniforms.uPhase.value +=

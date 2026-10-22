@@ -77,7 +77,7 @@ export function Cursor() {
       <div
         ref={ringRef}
         aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 z-[80] h-8 w-8 rounded-full border border-signal/50 opacity-0 mix-blend-difference"
+        className="cursor-ring pointer-events-none fixed left-0 top-0 z-[80] h-8 w-8 rounded-full border border-signal/50 opacity-0 mix-blend-difference"
         style={{ transition: 'opacity 240ms ease, transform 40ms linear' }}
       />
       <div

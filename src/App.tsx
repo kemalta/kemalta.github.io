@@ -5,6 +5,7 @@ import { usePointerTracking } from './hooks/usePointerTracking'
 import { useFpsMeter } from './components/HUD'
 import { Boot } from './components/Boot'
 import { Cursor } from './components/Cursor'
+import { PointerFX } from './components/PointerFX'
 import { HUD } from './components/HUD'
 import { Nav } from './components/Nav'
 import { SectionRail } from './components/SectionRail'
@@ -45,7 +46,7 @@ function Shell() {
   const handleBootDone = useCallback(() => setBooted(true), [])
 
   return (
-    <div className="grain vignette relative min-h-screen">
+    <div className="grain vignette crt relative min-h-screen">
       {/* background layers */}
       <div className="fixed inset-0 z-0 bg-void" aria-hidden="true" />
       <Suspense fallback={<StaticPoster />}>
@@ -73,6 +74,7 @@ function Shell() {
 
       <HUD />
       <Cursor />
+      <PointerFX />
 
       <Boot ready={sceneReady} onDone={handleBootDone} />
     </div>

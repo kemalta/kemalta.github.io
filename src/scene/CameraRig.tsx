@@ -32,6 +32,7 @@ const lookTarget = new THREE.Vector3(0, 0, 0)
 
 export function CameraRig() {
   const parallax = useRef({ x: 0, y: 0 })
+  const roll = useRef(0)
 
   const scratch = useMemo(
     () => ({ pos: new THREE.Vector3(), look: new THREE.Vector3() }),
@@ -39,7 +40,7 @@ export function CameraRig() {
   )
 
   useFrame((state, delta) => {
-    const { progress, pointer } = getState()
+    const { progress, pointer, velocity } = getState()
 
     /* ---- interpolate the keyframe path ---- */
     let from = KEYFRAMES[0]
@@ -76,11 +77,22 @@ export function CameraRig() {
     targetPos.copy(scratch.pos)
     targetPos.x += p.x * 0.62
     targetPos.y += p.y * 0.38
+
+    /* Scrolling fast pulls the camera in a touch, which reads as momentum. */
+    const energy = Math.max(-1, Math.min(1, velocity))
+    targetPos.z -= Math.abs(energy) * 0.22
+
     targetLook.copy(scratch.look)
 
     damp3(state.camera.position, targetPos, 0.42, delta)
     damp3(lookTarget, targetLook, 0.42, delta)
     state.camera.lookAt(lookTarget)
+
+    /* A few degrees of roll on a diagonal cursor, plus a nudge from scroll
+       velocity. Damped, so it never fights the pointer. */
+    const rollTarget = -p.x * 0.045 + energy * 0.022
+    roll.current += (rollTarget - roll.current) * Math.min(1, delta * 2.6)
+    state.camera.rotateZ(roll.current)
   })
 
   return null
