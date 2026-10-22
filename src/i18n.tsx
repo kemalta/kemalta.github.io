@@ -26,11 +26,30 @@ function readInitialLocale(): Locale {
   return navigator.language?.toLowerCase().startsWith('tr') ? 'tr' : 'en'
 }
 
+/** Keeps the document head in sync with the active locale. */
+function applyMeta({ meta }: SiteCopy, locale: Locale) {
+  document.title = meta.title
+
+  const write = (selector: string, value: string) => {
+    const el = document.querySelector<HTMLMetaElement>(selector)
+    if (el) el.setAttribute('content', value)
+  }
+
+  write('meta[name="description"]', meta.description)
+  write('meta[property="og:title"]', meta.title)
+  write('meta[property="og:description"]', meta.description)
+  write('meta[name="twitter:title"]', meta.title)
+  write('meta[name="twitter:description"]', meta.description)
+  write('meta[property="og:locale"]', locale === 'tr' ? 'tr_TR' : 'en_US')
+  write('meta[property="og:locale:alternate"]', locale === 'tr' ? 'en_US' : 'tr_TR')
+}
+
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(readInitialLocale)
 
   useEffect(() => {
     document.documentElement.lang = locale
+    applyMeta(copy[locale], locale)
     try {
       window.localStorage.setItem(STORAGE_KEY, locale)
     } catch {

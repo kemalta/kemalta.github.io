@@ -12,6 +12,7 @@
     "audit": "node scripts/audit.mjs",
     "audit:reduced": "node scripts/audit.mjs --reduced",
     "audit:scene": "node scripts/verify-scene.mjs",
+    "audit:live": "node scripts/audit.mjs --live",
     "audit:all": "npm run lint && npm run typecheck && npm run build && npm run audit && npm run audit:reduced && npm run audit:scene",
     "shoot": "node scripts/shoot.mjs",
     "layout": "node scripts/layout.mjs",

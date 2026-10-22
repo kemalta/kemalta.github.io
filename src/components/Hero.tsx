@@ -133,6 +133,15 @@ export function Hero({ revealed }: { revealed: boolean }) {
               {profile.email}
               <br />
               <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-muted underline decoration-line underline-offset-4 transition-colors duration-300 hover:text-signal"
+              >
+                {profile.linkedin}
+              </a>
+              <br />
+              <a
                 href={profile.instagramUrl}
                 target="_blank"
                 rel="noreferrer noopener"

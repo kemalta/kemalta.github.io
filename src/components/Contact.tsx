@@ -68,6 +68,24 @@ export function Contact() {
               </div>
 
               <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                data-reveal
+                className="surface group flex items-center justify-between gap-4 p-5"
+              >
+                <div className="min-w-0">
+                  <span className="label">{c.contact.linkedinLabel}</span>
+                  <span className="mt-1.5 block truncate font-mono text-[13px] text-ink transition-colors duration-300 group-hover:text-signal">
+                    {profile.linkedin}
+                  </span>
+                </div>
+                <span className="shrink-0 text-ink-dim transition-transform duration-300 group-hover:translate-x-1">
+                  ↗
+                </span>
+              </a>
+
+              <a
                 href={profile.instagramUrl}
                 target="_blank"
                 rel="noreferrer noopener"

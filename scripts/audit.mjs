@@ -17,9 +17,11 @@ import puppeteer from 'puppeteer-core'
 
 const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
 const PORT = 4187
-/* `vite preview` serves from the build's `base`, so a sub-path build (GitHub
-   Project Pages) can be audited by pointing AUDIT_URL at it. */
-const BASE = process.env.AUDIT_URL ?? `http://127.0.0.1:${PORT}`
+const LIVE_URL = 'https://kemalta.github.io'
+/* `--live` (or AUDIT_URL) points the run at an already-running site — the
+   GitHub Pages deployment, or a preview served from a non-root base. */
+const live = process.argv.includes('--live') || Boolean(process.env.AUDIT_URL)
+const BASE = process.env.AUDIT_URL ?? (process.argv.includes('--live') ? LIVE_URL : `http://127.0.0.1:${PORT}`)
 
 const REDUCED = process.argv.includes('--reduced')
 const OUT = path.resolve(REDUCED ? 'audit-reduced' : 'audit')
@@ -51,7 +53,7 @@ async function main() {
 
   /* AUDIT_URL points at an already-running site (e.g. the live deployment),
      so no local preview is needed. */
-  const preview = process.env.AUDIT_URL ? null : spawn(
+  const preview = live ? null : spawn(
     process.execPath,
     [viteBin, 'preview', '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'],
     { cwd: process.cwd(), stdio: 'ignore', detached: true },
@@ -230,6 +232,9 @@ async function main() {
           instagramLinks: links.filter((a) =>
             (a.getAttribute('href') ?? '').includes('instagram.com'),
           ).length,
+          linkedinLinks: links.filter((a) =>
+            (a.getAttribute('href') ?? '').includes('linkedin.com'),
+          ).length,
           unreachableFocusables: focusables,
           documentHeight: de.scrollHeight,
         }
@@ -270,6 +275,8 @@ async function main() {
       lang: document.documentElement.lang,
       h1: document.querySelector('h1')?.textContent?.trim(),
       lead: document.querySelector('main p')?.textContent?.trim().slice(0, 60),
+      title: document.title,
+      description: document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '',
     }))
 
     await page.evaluate(() => {
@@ -284,9 +291,18 @@ async function main() {
       h1: document.querySelector('h1')?.textContent?.trim(),
       lead: document.querySelector('main p')?.textContent?.trim().slice(0, 60),
       stored: window.localStorage.getItem('kte.locale'),
+      title: document.title,
+      description: document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '',
     }))
 
-    report.i18n = { before, after, changed: before.lang !== after.lang }
+    report.i18n = {
+      before,
+      after,
+      changed:
+        before.lang !== after.lang &&
+        before.title !== after.title &&
+        before.description !== after.description,
+    }
     await page.close()
   } finally {
     await browser.close()

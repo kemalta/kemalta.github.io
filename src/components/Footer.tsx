@@ -26,6 +26,14 @@ export function Footer() {
                 {profile.email}
               </a>
               <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="font-mono text-[12px] text-muted transition-colors duration-300 hover:text-signal"
+              >
+                LinkedIn
+              </a>
+              <a
                 href={profile.instagramUrl}
                 target="_blank"
                 rel="noreferrer noopener"
