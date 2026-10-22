@@ -35,7 +35,7 @@ export function Capabilities() {
           title={c.capabilities.title}
           intro={c.capabilities.intro}
         >
-          <p className="mt-6 font-mono text-[10px] tracking-[0.18em] text-faint uppercase lg:col-start-8 lg:col-span-5 lg:row-start-1 lg:mt-0">
+          <p className="mt-4 font-mono text-[10px] tracking-[0.18em] text-faint uppercase">
             {c.capabilities.hoverHint}
           </p>
         </SectionHeader>

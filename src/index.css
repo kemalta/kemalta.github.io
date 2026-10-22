@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
-/* Self-hosted fonts. Only the latin + latin-ext subsets are shipped —
-   latin-ext carries the Turkish characters (ş ğ İ ı). */
+/* Self-hosted fonts. Only the latin + latin-ext subsets are shipped ---
+   latin-ext carries the Turkish characters (-- -- -- --). */
 @import '@fontsource-variable/inter/wght.css';
 @import '@fontsource/instrument-serif/latin-400.css';
 @import '@fontsource/instrument-serif/latin-ext-400.css';
@@ -12,7 +12,7 @@
 
 @theme {
   /* ------------------------------------------------------------------ *
-   * Palette — "cold void + signal amber + phosphor teal"
+   * Palette --- "cold void + signal amber + phosphor teal"
    * ------------------------------------------------------------------ */
   --color-void: #07090c;
   --color-void-2: #0b0e13;
@@ -160,7 +160,7 @@
  * Effects
  * ------------------------------------------------------------------ */
 @layer components {
-  /* Grain — a single fixed layer, GPU-composited, pointer-events off */
+  /* Grain --- a single fixed layer, GPU-composited, pointer-events off */
   .grain::after {
     content: '';
     position: fixed;
@@ -213,7 +213,7 @@
     100% { box-shadow: 0 0 0 0 transparent; }
   }
 
-  /* Scroll hint — a line of light travelling down the rail */
+  /* Scroll hint --- a line of light travelling down the rail */
   @keyframes scroll-hint {
     0% { transform: translateY(-100%); }
     60% { transform: translateY(150%); }
@@ -249,7 +249,7 @@
     );
   }
 
-  /* Reveal base — JS toggles [data-revealed] */
+  /* Reveal base --- JS toggles [data-revealed] */
   [data-reveal] {
     opacity: 0;
     transform: translate3d(0, 26px, 0) scale(0.988);
@@ -268,7 +268,7 @@
     filter: none;
   }
 
-  /* Phones skip the blur pass — it is the one effect that can cost frames
+  /* Phones skip the blur pass --- it is the one effect that can cost frames
      on a low-end GPU, and at that width it is barely visible anyway. */
   @media (width < 40rem) {
     [data-reveal] {
@@ -287,7 +287,7 @@
     transform: scaleX(1);
   }
 
-  /* Corner brackets — a sensor frame that snaps around a section header */
+  /* Corner brackets --- a sensor frame that snaps around a section header */
   .brackets {
     position: absolute;
     inset: -0.85rem;
@@ -396,7 +396,7 @@
     }
   }
 
-  /* Cursor reticle — vertical ticks on the ring */
+  /* Cursor reticle --- vertical ticks on the ring */
   .cursor-ring::before,
   .cursor-ring::after {
     content: '';
@@ -416,7 +416,7 @@
     bottom: -7px;
   }
 
-  /* CRT layer — fine scanlines plus a slow phosphor sweep */
+  /* CRT layer --- fine scanlines plus a slow phosphor sweep */
   .crt::before {
     content: '';
     position: fixed;
@@ -487,6 +487,222 @@
     clip-path: inset(0 0 0 0);
   }
 
+  /* ---------------------------------------------------------------- *
+   * Ambient light --- two slow glows behind the whole page
+   * ---------------------------------------------------------------- */
+  .ambient {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .ambient::before,
+  .ambient::after {
+    content: '';
+    position: absolute;
+    width: 70vw;
+    height: 70vw;
+    border-radius: 999px;
+    filter: blur(90px);
+    will-change: transform;
+  }
+
+  .ambient::before {
+    top: -32vw;
+    left: -18vw;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--color-signal) 9%, transparent),
+      transparent 62%
+    );
+    animation: ambient-drift-a 26s ease-in-out infinite alternate;
+  }
+
+  .ambient::after {
+    right: -24vw;
+    bottom: -34vw;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--color-violet) 8%, transparent),
+      transparent 62%
+    );
+    animation: ambient-drift-b 32s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambient-drift-a {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(6vw, 5vh, 0) scale(1.12); }
+  }
+
+  @keyframes ambient-drift-b {
+    from { transform: translate3d(0, 0, 0) scale(1.08); }
+    to { transform: translate3d(-5vw, -4vh, 0) scale(0.96); }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Ticker band
+   * ---------------------------------------------------------------- */
+  .ticker-band {
+    position: relative;
+    overflow: hidden;
+    border-block: 1px solid var(--color-line);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--color-panel) 55%, transparent),
+      transparent
+    );
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  }
+
+  .ticker {
+    display: flex;
+    width: max-content;
+    animation: ticker-scroll 44s linear infinite;
+  }
+
+  .ticker-reverse {
+    animation-direction: reverse;
+  }
+
+  .ticker-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.9rem 1.6rem;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .ticker-sep {
+    font-size: 0.5rem;
+    color: var(--color-signal);
+    opacity: 0.75;
+  }
+
+  @keyframes ticker-scroll {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Ghost section numeral
+   * ---------------------------------------------------------------- */
+  .ghost-index {
+    position: absolute;
+    top: -0.45em;
+    right: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(5rem, 11vw, 10rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in oklab, var(--color-ink) 12%, transparent);
+    opacity: 0.55;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Frame --- four detached corner marks around a block
+   * ---------------------------------------------------------------- */
+  .frame {
+    position: relative;
+  }
+
+  .frame::before,
+  .frame::after {
+    content: '';
+    position: absolute;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-color: color-mix(in oklab, var(--color-signal) 45%, transparent);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+  }
+
+  .frame::before {
+    top: -1rem;
+    left: -1rem;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  .frame::after {
+    right: -1rem;
+    bottom: -1rem;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Activity bars --- a decorative load readout
+   * ---------------------------------------------------------------- */
+  .activity {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 26px;
+  }
+
+  .activity i {
+    display: block;
+    width: 2px;
+    height: 40%;
+    border-radius: 1px;
+    background: color-mix(in oklab, var(--color-phosphor) 70%, transparent);
+    transform-origin: bottom;
+    animation: activity-pulse 2.6s ease-in-out infinite alternate;
+    animation-delay: var(--i, 0ms);
+    opacity: 0.75;
+  }
+
+  @keyframes activity-pulse {
+    from { transform: scaleY(0.35); opacity: 0.35; }
+    to { transform: scaleY(1); opacity: 0.9; }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Header scroll progress
+   * ---------------------------------------------------------------- */
+  .nav-progress {
+    height: 1px;
+    transform-origin: left center;
+    transform: scaleX(var(--scroll-progress, 0));
+    background: linear-gradient(
+      90deg,
+      var(--color-signal),
+      var(--color-phosphor) 60%,
+      transparent
+    );
+  }
+
+  /* Footer wordmark --- oversized, clipped, decorative */
+  .wordmark {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 17vw, 15rem);
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
+    user-select: none;
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar {
     width: 9px;
@@ -505,7 +721,7 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Reduced motion — kill transforms, keep the composition
+ * Reduced motion --- kill transforms, keep the composition
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -544,4 +760,88 @@
   .grain::after {
     animation: none;
   }
+
+  .ambient::before,
+  .ambient::after,
+  .ticker,
+  .activity i {
+    animation: none;
+  }
+
+  .ticker-group:nth-child(2) {
+    display: none;
+  }
 }
+
+  /* Card corner numeral */
+  .card-index {
+    position: absolute;
+    right: 0.5rem;
+    top: -0.15em;
+    font-family: var(--font-mono);
+    font-size: 4.5rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in oklab, var(--color-ink) 10%, transparent);
+    opacity: 0.45;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.6s var(--ease-out-expo);
+  }
+
+  .group:hover .card-index {
+    opacity: 0.75;
+  }
+
+  /* Boot backdrop grid */
+  .boot-grid {
+    background-image:
+      linear-gradient(to right, rgb(232 238 245 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(232 238 245 / 0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(70% 65% at 50% 45%, #000 20%, transparent 78%);
+  }
+
+  /* Hero pointer glow */
+  .hero-glow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40rem;
+    height: 40rem;
+    border-radius: 999px;
+    pointer-events: none;
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--color-signal) 10%, transparent),
+      transparent 62%
+    );
+    filter: blur(30px);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-out-expo);
+    will-change: transform;
+  }
+
+  .hero-glow[data-on='true'] {
+    opacity: 0.9;
+  }
+
+  /* Scene scrim - keeps luminous passages from eating the body copy */
+  .scene-scrim {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(58% 46% at 50% 48%, rgb(7 9 12 / 0.32), transparent 72%),
+      linear-gradient(
+        to bottom,
+        rgb(7 9 12 / 0.18),
+        transparent 26%,
+        transparent 74%,
+        rgb(7 9 12 / 0.2)
+      );
+  }

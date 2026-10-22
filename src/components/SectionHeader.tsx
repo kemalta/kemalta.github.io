@@ -11,8 +11,9 @@ interface SectionHeaderProps {
 
 /**
  * Shared section chrome: an index rule, a monospace kicker, a display title
- * and an optional intro column. The kicker decodes into place and the whole
- * header sits inside a four-corner sensor frame.
+ * and an optional intro. The kicker decodes into place, the whole header sits
+ * inside a four-corner sensor frame and a ghost numeral is parked in the
+ * right margin as a section anchor.
  */
 export function SectionHeader({
   kicker,
@@ -21,6 +22,8 @@ export function SectionHeader({
   children,
   className = '',
 }: SectionHeaderProps) {
+  const index = kicker.split('/')[0]?.trim() ?? ''
+
   return (
     <header className={`relative ${className}`} data-reveal>
       <span className="brackets" aria-hidden="true">
@@ -30,6 +33,12 @@ export function SectionHeader({
         <i />
       </span>
 
+      {index ? (
+        <span className="ghost-index hidden lg:block" aria-hidden="true">
+          {index}
+        </span>
+      ) : null}
+
       <div className="relative flex items-center gap-4">
         <span className="label text-signal">
           <DecodeText text={kicker} />
@@ -37,10 +46,10 @@ export function SectionHeader({
         <span className="rule flex-1" />
       </div>
 
-      <div className="relative mt-6 grid gap-6 lg:grid-cols-12 lg:gap-10">
-        <h2 className="display text-title text-ink lg:col-span-7">{title}</h2>
+      <div className="relative mt-6">
+        <h2 className="display max-w-4xl text-title text-ink">{title}</h2>
         {intro ? (
-          <p className="max-w-xl text-[15px] leading-relaxed text-ink-dim lg:col-span-5 lg:pt-2">
+          <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-ink-dim">
             {intro}
           </p>
         ) : null}

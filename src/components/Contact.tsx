@@ -3,9 +3,11 @@ import { useI18n } from '../i18n'
 import { useReveal } from '../hooks/useReveal'
 import { SectionHeader } from './SectionHeader'
 import { profile } from '../content'
+import { useClock } from '../hooks/useClock'
 
 export function Contact() {
   const { c } = useI18n()
+  const clock = useClock()
   const ref = useReveal<HTMLElement>()
   const [copied, setCopied] = useState(false)
   const [form, setForm] = useState({ name: '', subject: '', message: '' })
@@ -103,12 +105,19 @@ export function Contact() {
                 </span>
               </a>
 
-              <div data-reveal className="flex items-center gap-2.5 p-2">
+              <div data-reveal className="flex flex-wrap items-center gap-x-2.5 gap-y-1 p-2">
                 <span className="pulse-dot" />
                 <span className="text-[13px] text-ink-dim">{c.contact.availability}</span>
                 <span className="text-faint">·</span>
                 <span className="font-mono text-[11px] text-faint">
                   {c.contact.responseTime}
+                </span>
+                <span className="text-faint">·</span>
+                <span
+                  className="font-mono text-[11px] tabular-nums text-phosphor/80"
+                  title={c.hero.metaLabels.time}
+                >
+                  {clock}
                 </span>
               </div>
             </div>

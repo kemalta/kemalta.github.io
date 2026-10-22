@@ -25,7 +25,11 @@ export function Profile() {
                 <p
                   key={index}
                   data-reveal
-                  className="text-[17px] leading-[1.75] text-ink-dim sm:text-[18px]"
+                  className={
+                    index === 0
+                      ? 'text-[19px] leading-[1.65] text-ink sm:text-[21px]'
+                      : 'text-[17px] leading-[1.75] text-ink-dim sm:text-[18px]'
+                  }
                 >
                   {paragraph}
                 </p>

@@ -8,6 +8,10 @@ export function Footer() {
 
   return (
     <footer className="relative border-t border-line py-12">
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-signal/40 to-transparent"
+      />
       <div className="shell">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -62,6 +66,11 @@ export function Footer() {
           </span>
           <span>{c.footer.colophon}</span>
         </div>
+      </div>
+
+      {/* oversized signature, clipped by the viewport edge */}
+      <div aria-hidden="true" className="mt-10 overflow-hidden px-5 sm:px-10">
+        <span className="wordmark">{profile.name}</span>
       </div>
     </footer>
   )

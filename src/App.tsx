@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
-import { I18nProvider } from './i18n'
+import { I18nProvider, useI18n } from './i18n'
 import { useScrollEngine } from './hooks/useScrollEngine'
 import { usePointerTracking } from './hooks/usePointerTracking'
 import { useFpsMeter } from './components/HUD'
@@ -10,6 +10,7 @@ import { HUD } from './components/HUD'
 import { Nav } from './components/Nav'
 import { SectionRail } from './components/SectionRail'
 import { Hero } from './components/Hero'
+import { Ticker } from './components/Ticker'
 import { Profile } from './components/Profile'
 import { Capabilities } from './components/Capabilities'
 import { Timeline } from './components/Timeline'
@@ -30,6 +31,7 @@ const SceneCanvas = lazy(() =>
 const SCENE_TIMEOUT = 6000
 
 function Shell() {
+  const { c } = useI18n()
   const [booted, setBooted] = useState(false)
   const [sceneReady, setSceneReady] = useState(false)
 
@@ -46,12 +48,14 @@ function Shell() {
   const handleBootDone = useCallback(() => setBooted(true), [])
 
   return (
-    <div className="grain vignette crt relative min-h-screen">
+    <div id="page" className="grain vignette crt relative min-h-screen">
       {/* background layers */}
       <div className="fixed inset-0 z-0 bg-void" aria-hidden="true" />
+      <div className="ambient" aria-hidden="true" />
       <Suspense fallback={<StaticPoster />}>
         <SceneCanvas onReady={handleReady} />
       </Suspense>
+      <div className="scene-scrim" aria-hidden="true" />
 
       {/* content */}
       <div className="relative z-10">
@@ -60,11 +64,13 @@ function Shell() {
 
         <main id="main">
           <Hero revealed={booted} />
+          <Ticker items={c.capabilities.items.map((item) => item.title)} />
           <Profile />
           <Capabilities />
           <Timeline />
           <Services />
           <Projects />
+          <Ticker items={c.services.items.map((service) => service.title)} reverse />
           <Toolkit />
           <Contact />
         </main>

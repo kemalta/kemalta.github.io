@@ -54,7 +54,7 @@ export function Boot({ ready, onDone }: BootProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col justify-between bg-void px-5 py-6 transition-[opacity,transform] duration-[900ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] sm:px-10 sm:py-10"
+      className="fixed inset-0 z-[100] flex flex-col justify-between overflow-hidden bg-void px-5 py-6 transition-[opacity,transform] duration-[900ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] sm:px-10 sm:py-10"
       style={{
         opacity: exiting ? 0 : 1,
         transform: exiting ? 'translate3d(0,-2%,0)' : 'none',
@@ -63,12 +63,20 @@ export function Boot({ ready, onDone }: BootProps) {
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center justify-between font-mono text-[10px] tracking-[0.2em] text-faint uppercase">
+      <div className="boot-grid pointer-events-none absolute inset-0" aria-hidden="true" />
+      <span
+        className="pointer-events-none absolute -right-8 bottom-6 select-none font-[family-name:var(--font-display)] text-[22vw] leading-none text-ink/[0.03]"
+        aria-hidden="true"
+      >
+        KT
+      </span>
+
+      <div className="relative flex items-center justify-between font-mono text-[10px] tracking-[0.2em] text-faint uppercase">
         <span>kemaltalhaekici</span>
         <span>v1.0 — 2026</span>
       </div>
 
-      <div className="mx-auto w-full max-w-2xl">
+      <div className="frame relative mx-auto w-full max-w-2xl">
         <ul className="space-y-1 font-mono text-[11px] leading-relaxed text-muted sm:text-xs">
           {c.boot.lines.map((line, index) => (
             <li
@@ -84,11 +92,18 @@ export function Boot({ ready, onDone }: BootProps) {
           ))}
         </ul>
 
-        <div className="mt-8 h-px w-full overflow-hidden bg-line">
-          <div
-            className="h-full bg-gradient-to-r from-signal to-phosphor transition-[width] duration-200 ease-out"
-            style={{ width: `${Math.min(100, shown)}%` }}
-          />
+        <div className="mt-8 flex items-center gap-[3px]" aria-hidden="true">
+          {Array.from({ length: 48 }, (_, index) => {
+            const lit = index < Math.round((Math.min(100, shown) / 100) * 48)
+            return (
+              <span
+                key={index}
+                className={`h-1.5 flex-1 transition-colors duration-150 ${
+                  lit ? 'bg-signal' : 'bg-line'
+                }`}
+              />
+            )
+          })}
         </div>
 
         <div className="mt-3 flex items-center justify-between font-mono text-[10px] tracking-[0.2em] uppercase">
@@ -99,7 +114,7 @@ export function Boot({ ready, onDone }: BootProps) {
         </div>
       </div>
 
-      <div className="flex items-end justify-between">
+      <div className="relative flex items-end justify-between">
         <span className="font-mono text-[10px] tracking-[0.2em] text-faint uppercase">
           ICT RUNTIME
         </span>

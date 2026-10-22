@@ -31,8 +31,22 @@ export function Projects() {
                 key={project.id}
                 data-reveal
                 style={accentStyle(project.accent)}
-                className="surface group relative overflow-hidden"
+                className="surface group relative overflow-hidden pl-px"
               >
+                {/* accent rail — lights up while the case is open */}
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-y-0 left-0 w-px bg-[var(--accent)] transition-opacity duration-500 ${
+                    open ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute -left-24 top-0 h-40 w-40 rounded-full blur-3xl transition-opacity duration-700 ${
+                    open ? 'opacity-25' : 'opacity-0'
+                  }`}
+                  style={{ background: 'var(--accent)' }}
+                />
                 <button
                   type="button"
                   onClick={() => setOpenId(open ? null : project.id)}

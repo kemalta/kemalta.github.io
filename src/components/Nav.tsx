@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
 import { LOCALES, profile } from '../content'
 import { scrollToId } from '../lib/scrollTo'
+import { useStoreSnapshot } from '../hooks/useStoreSnapshot'
 
 export function Nav() {
   const { c, locale, setLocale } = useI18n()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const activeSection = useStoreSnapshot((s) => s.activeSection)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -68,19 +70,35 @@ export function Nav() {
 
           {/* desktop links */}
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-            {c.nav.items.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => go(item.id)}
-                className="group relative px-3 py-2 font-mono text-[11px] tracking-[0.12em] text-muted uppercase transition-colors duration-300 hover:text-ink"
-              >
-                <span className="mr-1.5 text-faint transition-colors duration-300 group-hover:text-signal">
-                  {item.index}
-                </span>
-                {item.label}
-              </button>
-            ))}
+            {c.nav.items.map((item) => {
+              const active = activeSection === item.id
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => go(item.id)}
+                  aria-current={active ? 'true' : undefined}
+                  className={`group relative px-3 py-2 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors duration-300 ${
+                    active ? 'text-ink' : 'text-muted hover:text-ink'
+                  }`}
+                >
+                  <span
+                    className={`mr-1.5 transition-colors duration-300 ${
+                      active ? 'text-signal' : 'text-faint group-hover:text-signal'
+                    }`}
+                  >
+                    {item.index}
+                  </span>
+                  {item.label}
+                  <span
+                    className={`absolute inset-x-3 bottom-0 h-px origin-left bg-signal transition-transform duration-500 ${
+                      active ? 'scale-x-100' : 'scale-x-0'
+                    }`}
+                    aria-hidden="true"
+                  />
+                </button>
+              )
+            })}
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -146,7 +164,11 @@ export function Nav() {
             </button>
           </div>
         </div>
+
+        {/* reading progress — driven by a CSS variable, no re-render */}
+        <div className="nav-progress absolute inset-x-0 bottom-0" aria-hidden="true" />
       </header>
+
 
       {/* mobile drawer */}
       <div

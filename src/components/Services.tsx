@@ -30,6 +30,14 @@ export function Services() {
               style={accentStyle(service.accent)}
               className="surface group relative flex flex-col overflow-hidden p-7 sm:p-9"
             >
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)]/60 to-transparent opacity-40 transition-opacity duration-500 group-hover:opacity-100"
+              />
+              <span className="card-index" aria-hidden="true">
+                {service.index}
+              </span>
+
               <div
                 className="pointer-events-none absolute -left-16 -bottom-24 h-56 w-56 rounded-full opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-30"
                 style={{ background: 'var(--accent)' }}
@@ -58,7 +66,10 @@ export function Services() {
                     key={item}
                     className="font-mono text-[11px] leading-relaxed text-ink-dim"
                   >
-                    <span className="mr-2 text-[var(--accent)]">▸</span>
+                    <span
+                      className="mr-2 inline-block h-1.5 w-1.5 translate-y-[-1px] bg-[var(--accent)]/70"
+                      aria-hidden="true"
+                    />
                     {item}
                   </li>
                 ))}

@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { prefersReducedMotion } from '../lib/quality'
-import { setState } from '../lib/store'
+import { getState, setState } from '../lib/store'
 import { registerLenis } from '../lib/scrollTo'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -40,9 +40,9 @@ export function useScrollEngine() {
     }
 
     const trigger = ScrollTrigger.create({
-      trigger: '#page',
-      start: 'top top',
-      end: 'bottom bottom',
+      start: 0,
+      end: 'max',
+      invalidateOnRefresh: true,
       onUpdate: (self) => {
         const delta = self.progress - last
         last = self.progress
@@ -56,6 +56,17 @@ export function useScrollEngine() {
         )
       },
     })
+
+    /* Velocity is published on scroll events only, so it would stay pinned at
+       its last value. Bleed it back to zero on the ticker — the scene uses it
+       for momentum, and momentum has to end. */
+    const settle = () => {
+      const { velocity } = getState()
+      if (velocity === 0) return
+      const next = Math.abs(velocity) < 0.004 ? 0 : velocity * 0.92
+      setState({ velocity: next })
+    }
+    gsap.ticker.add(settle)
 
     /* ---------------------------------------------------------- *
      * Active section — IntersectionObserver is cheaper and more
@@ -97,6 +108,7 @@ export function useScrollEngine() {
       window.removeEventListener('resize', onResize)
       observer.disconnect()
       trigger.kill()
+      gsap.ticker.remove(settle)
       if (raf) gsap.ticker.remove(raf)
       registerLenis(null)
       lenis?.destroy()

@@ -21,9 +21,23 @@ export function Toolkit() {
         />
 
         <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line/50 sm:grid-cols-2 lg:grid-cols-3">
-          {c.toolkit.groups.map((group) => (
-            <div key={group.id} data-reveal className="bg-void p-6 sm:p-7">
-              <h3 className="font-mono text-[10px] tracking-[0.2em] text-signal uppercase">
+          {c.toolkit.groups.map((group, index) => (
+            <div
+              key={group.id}
+              data-reveal
+              className="group relative bg-void p-6 transition-colors duration-500 hover:bg-panel/40 sm:p-7"
+            >
+              <span
+                aria-hidden="true"
+                className="absolute right-4 top-4 font-mono text-[10px] tracking-[0.18em] text-faint/50"
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-phosphor/50 transition-transform duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100"
+              />
+              <h3 className="font-mono text-[10px] tracking-[0.2em] text-signal uppercase transition-colors duration-300 group-hover:text-phosphor">
                 {group.label}
               </h3>
               <ul className="mt-5 flex flex-wrap gap-1.5">
