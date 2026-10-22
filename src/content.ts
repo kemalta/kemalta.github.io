@@ -49,7 +49,7 @@ export const profile: Profile = {
   location: 'Türkiye',
   // TODO(kemal): real IANA zone, e.g. Europe/Istanbul — drives the live clock
   timezone: 'Europe/Istanbul',
-  availability: 'Açık',
+  availability: 'Danışmanlık ve iş birliği',
   roles: ['Siber Güvenlik', 'Otomasyon & Yapay Zekâ', 'ICT & Sistem'],
 }
 
@@ -252,7 +252,7 @@ const tr: SiteCopy = {
     primaryCta: 'Projeleri gör',
     secondaryCta: 'İletişime geç',
     scrollHint: 'kaydır',
-    availability: 'Yeni iş fırsatlarına açık',
+    availability: 'Danışmanlık ve iş birliği için ulaşın',
     metaLabels: {
       location: 'Konum',
       time: 'Yerel saat',
@@ -670,7 +670,7 @@ const tr: SiteCopy = {
     copied: 'Kopyalandı',
     instagramLabel: 'Instagram',
     linkedinLabel: 'LinkedIn',
-    availability: 'Yeni iş fırsatlarına açık',
+    availability: 'Danışmanlık ve iş birliği için ulaşın',
     responseTime: 'Yanıt süresi: aynı gün',
     form: {
       name: 'Ad',
@@ -742,7 +742,7 @@ const en: SiteCopy = {
     primaryCta: 'See the work',
     secondaryCta: 'Get in touch',
     scrollHint: 'scroll',
-    availability: 'Open to new work',
+    availability: 'Available for consulting and collaboration',
     metaLabels: {
       location: 'Location',
       time: 'Local time',
@@ -1160,7 +1160,7 @@ const en: SiteCopy = {
     copied: 'Copied',
     instagramLabel: 'Instagram',
     linkedinLabel: 'LinkedIn',
-    availability: 'Open to new work',
+    availability: 'Available for consulting and collaboration',
     responseTime: 'Response time: same day',
     form: {
       name: 'Name',
