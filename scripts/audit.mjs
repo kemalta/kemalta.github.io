@@ -49,21 +49,23 @@ async function main() {
 
   const viteBin = path.resolve('node_modules', 'vite', 'bin', 'vite.js')
 
-  const preview = spawn(
+  /* AUDIT_URL points at an already-running site (e.g. the live deployment),
+     so no local preview is needed. */
+  const preview = process.env.AUDIT_URL ? null : spawn(
     process.execPath,
     [viteBin, 'preview', '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'],
     { cwd: process.cwd(), stdio: 'ignore', detached: true },
   )
 
   const cleanup = async () => {
-    if (!preview.pid) return
+    if (!preview?.pid) return
     await new Promise((resolve) => {
       const killer = spawn('taskkill', ['/pid', String(preview.pid), '/T', '/F'], { stdio: 'ignore' })
       killer.on('exit', resolve)
       killer.on('error', resolve)
     })
   }
-  process.on('exit', () => { try { process.kill(preview.pid, 'SIGKILL') } catch { /* already gone */ } })
+  process.on('exit', () => { try { if (preview) process.kill(preview.pid, 'SIGKILL') } catch { /* already gone */ } })
   process.on('SIGINT', () => {
     void cleanup().then(() => process.exit(1))
   })
