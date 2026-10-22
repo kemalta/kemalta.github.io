@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="tr" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07090c" />
+    <meta name="robots" content="noindex" />
+    <title>Sayfa bulunamadı — Kemal Talha Ekici</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root {
+        --void: #07090c;
+        --panel: #10141b;
+        --line: #1e242e;
+        --ink: #e8eef5;
+        --ink-dim: #a7b2c0;
+        --faint: #7d8794;
+        --signal: #f5a524;
+        --phosphor: #35d6c3;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1.5rem;
+        background: var(--void);
+        color: var(--ink);
+        font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, rgba(232, 238, 245, 0.04) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(232, 238, 245, 0.04) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: radial-gradient(90% 70% at 50% 40%, #000 10%, transparent 80%);
+        pointer-events: none;
+      }
+      main {
+        position: relative;
+        width: 100%;
+        max-width: 620px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: color-mix(in srgb, var(--panel) 82%, transparent);
+        padding: clamp(2rem, 6vw, 3.25rem);
+      }
+      .label {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--phosphor);
+      }
+      .label::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 0 4px rgba(53, 214, 195, 0.14);
+      }
+      h1 {
+        margin-top: 1.5rem;
+        font-family: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+        font-weight: 400;
+        font-size: clamp(4.5rem, 18vw, 7.5rem);
+        line-height: 0.85;
+        letter-spacing: -0.03em;
+      }
+      h1 span { color: var(--signal); }
+      p {
+        margin-top: 1.5rem;
+        font-size: 15px;
+        line-height: 1.65;
+        color: var(--ink-dim);
+        max-width: 42ch;
+      }
+      nav {
+        margin-top: 2.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-radius: 12px;
+        padding: 0.8rem 1.35rem;
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: transform 0.25s, border-color 0.25s, background 0.25s;
+      }
+      a:hover { transform: translateY(-2px); }
+      a:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+      .primary { background: var(--signal); color: var(--void); }
+      .secondary { border: 1px solid var(--line); color: var(--ink); }
+      .secondary:hover { border-color: color-mix(in srgb, var(--signal) 50%, transparent); }
+      footer {
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--line);
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--faint);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="label">HTTP 404 · Hata</div>
+      <h1><span>404</span></h1>
+      <p>
+        Aradığınız adres burada değil. Adres değişmiş ya da hiç var olmamış olabilir.
+        <br />
+        <em>The page you are looking for does not exist.</em>
+      </p>
+      <nav>
+        <a class="primary" href="/">Ana sayfa</a>
+        <a class="secondary" href="mailto:kemaltalhaekici@gmail.com">E-posta</a>
+      </nav>
+      <footer>Kemal Talha Ekici · Siber Güvenlik · Otomasyon · ICT</footer>
+    </main>
+  </body>
+</html>
