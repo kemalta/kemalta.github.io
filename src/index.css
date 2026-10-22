@@ -1,0 +1,339 @@
+@import 'tailwindcss';
+
+/* Self-hosted fonts. Only the latin + latin-ext subsets are shipped —
+   latin-ext carries the Turkish characters (ş ğ İ ı). */
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource/instrument-serif/latin-400.css';
+@import '@fontsource/instrument-serif/latin-ext-400.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/latin-ext-400.css';
+@import '@fontsource/jetbrains-mono/latin-500.css';
+@import '@fontsource/jetbrains-mono/latin-ext-500.css';
+
+@theme {
+  /* ------------------------------------------------------------------ *
+   * Palette — "cold void + signal amber + phosphor teal"
+   * ------------------------------------------------------------------ */
+  --color-void: #07090c;
+  --color-void-2: #0b0e13;
+  --color-panel: #10141b;
+  --color-panel-2: #161b24;
+  --color-line: #1e242e;
+
+  --color-ink: #e8eef5;
+  --color-ink-dim: #a3aebd;
+  --color-muted: #6b7787;
+  --color-faint: #46505e;
+
+  --color-signal: #f5a524;
+  --color-signal-soft: #ffc46b;
+  --color-phosphor: #35d6c3;
+  --color-phosphor-soft: #7ef0e2;
+  --color-violet: #8b7cf6;
+  --color-alert: #ff6b6b;
+
+  --font-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --text-hero: clamp(3.2rem, 13vw, 12rem);
+  --text-display: clamp(2.4rem, 6.2vw, 6rem);
+  --text-title: clamp(1.8rem, 3.4vw, 3.2rem);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --radius-card: 18px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: auto;
+    background-color: var(--color-void);
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-signal) 35%, transparent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  input,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities
+ * ------------------------------------------------------------------ */
+@utility shell {
+  width: 100%;
+  max-width: 88rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+
+  @media (width >= 80rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+}
+
+@utility hairline {
+  border-top: 1px solid var(--color-line);
+}
+
+/* ------------------------------------------------------------------ *
+ * Effects
+ * ------------------------------------------------------------------ */
+@layer components {
+  /* Grain — a single fixed layer, GPU-composited, pointer-events off */
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.038;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-shift 7s steps(6) infinite;
+  }
+
+  @keyframes grain-shift {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-3%, 2%); }
+    40% { transform: translate(2%, -3%); }
+    60% { transform: translate(-2%, -2%); }
+    80% { transform: translate(3%, 1%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* Vignette */
+  .vignette::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 90% at 50% 40%,
+      transparent 40%,
+      color-mix(in oklab, var(--color-void) 78%, transparent) 100%
+    );
+  }
+
+  /* Live status dot */
+  .pulse-dot {
+    position: relative;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--color-phosphor);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-phosphor) 70%, transparent);
+    animation: pulse-ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-phosphor) 60%, transparent); }
+    70% { box-shadow: 0 0 0 9px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  /* Scroll hint — a line of light travelling down the rail */
+  @keyframes scroll-hint {
+    0% { transform: translateY(-100%); }
+    60% { transform: translateY(150%); }
+    100% { transform: translateY(150%); }
+  }
+
+  /* Card surface */
+  .surface {
+    position: relative;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0)) ,
+      var(--color-panel);
+    transition:
+      border-color 0.45s var(--ease-out-expo),
+      transform 0.45s var(--ease-out-expo),
+      background-color 0.45s var(--ease-out-expo);
+  }
+
+  .surface:hover {
+    border-color: color-mix(in oklab, var(--accent, var(--color-signal)) 42%, var(--color-line));
+  }
+
+  /* Section index rule */
+  .rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--color-line),
+      color-mix(in oklab, var(--color-signal) 30%, transparent),
+      transparent
+    );
+  }
+
+  /* Reveal base — JS toggles [data-revealed] */
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal][data-revealed='true'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Split-text headline */
+  .split-char {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+
+  .split-char > span {
+    display: inline-block;
+    transform: translate3d(0, 105%, 0) rotate(4deg);
+    transition: transform 1.05s var(--ease-out-expo);
+    transition-delay: var(--char-delay, 0ms);
+  }
+
+  [data-revealed='true'] .split-char > span,
+  .split-char[data-revealed='true'] > span {
+    transform: none;
+  }
+
+  /* Mobile drawer */
+  .drawer {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 0.7s var(--ease-in-out-quart);
+  }
+
+  .drawer[data-open='true'] {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-faint);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reduced motion — kill transforms, keep the composition
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .split-char > span {
+    transform: none;
+  }
+
+  .grain::after {
+    animation: none;
+  }
+}

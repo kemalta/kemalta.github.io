@@ -1,0 +1,16 @@
+# dependencies
+node_modules
+
+# build output
+dist
+*.tsbuildinfo
+
+# audit artefacts
+audit/
+audit-reduced/
+*.log
+
+# editor / os
+.DS_Store
+.vscode
+.idea
