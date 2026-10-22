@@ -51,18 +51,14 @@ is accurate.
 Wazuh, ArgoCD, Harbor, pgvector, …). This is the section a technical reviewer
 scrutinises first — remove anything you have only read about.
 
-## 6. Social preview image
-
-`index.html` has `twitter:card = summary_large_image` but no `og:image`.
-A 1200×630 PNG with the wordmark is the missing piece for link previews on
-LinkedIn, X and WhatsApp.
-
-## 7. Optional polish
+## 6. Optional polish
 
 - [ ] Custom domain (`kemaltalhaekici.com`) — add `CNAME`, point DNS, update
       `VITE_SITE_URL` in the workflow.
-- [ ] A `404.html` that matches the design (GitHub Pages serves it automatically).
 - [ ] Privacy note if analytics is ever added.
+
+Social preview (`public/og-image.png`) and the `404.html` page are done — regenerate
+the card with `npm run og` after any change to the positioning.
 
 ## 8. Commands
 
